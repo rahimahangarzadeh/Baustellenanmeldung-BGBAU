@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Baustellenanmeldung BG BAU</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1a1a18">
+  <meta name="description" content="Baustellenanmeldung für BG BAU">
+  <link rel="icon" type="image/png" href="icon-192.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo-block">
+        <div class="logo-main">Janning Group</div>
+        <div class="logo-sub">Baustellenanmeldung</div>
+      </div>
+      <div class="header-stripe"></div>
+      <div class="form-title-block">
+        <div class="form-title">BG BAU Meldung</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="form-container">
+    <!-- PAGE TITLE -->
+    <div class="page-title-block">
+      <h1 class="page-title">Baustellenanmeldung BG BAU</h1>
+      <p class="page-subtitle">Erfassen Sie alle relevanten Baustelleninformationen</p>
+    </div>
+
+    <!-- VORLAGEN BUTTONS -->
+    <div class="template-buttons">
+      <span class="template-label">Vorlage auswählen:</span>
+      <button type="button" class="template-btn" data-template="magazin">Magazin & Werkstatt</button>
+      <button type="button" class="template-btn" data-template="rohrbau">Rohrbauarbeiten</button>
+      <button type="button" class="template-btn" data-template="tiefbau">Tiefbauarbeiten</button>
+      <button type="button" class="template-btn" data-template="horizontalbohrung">Horizontalbohrung</button>
+      <button type="button" class="template-btn" data-template="fernwaerme">Fernwärmeleitungen</button>
+      <button type="button" class="template-btn" data-template="glasfaser">Glasfaser</button>
+    </div>
+
+    <!-- FORM -->
+    <form id="baustellenForm">
+      <!-- SECTION 1: BASISDATEN -->
+      <section class="form-section">
+        <div class="section-label">
+          <div class="section-num">01</div>
+          <div class="section-name">Basisdaten</div>
+        </div>
+        <div class="fields-grid">
+          <div class="field-group">
+            <label class="field-label required">Datum</label>
+            <input type="datetime-local" class="field-input" id="datum" name="datum" required>
+          </div>
+          <div class="field-group">
+            <label class="field-label required">E-Mail-Adresse für Zustellung</label>
+            <input type="email" class="field-input" id="email" name="email" required>
+          </div>
+          <div class="field-group">
+            <label class="field-label required">Name des Arbeitsverantwortlichen</label>
+            <input type="text" class="field-input" id="arbeitsverantwortlicher" name="arbeitsverantwortlicher" required>
+          </div>
+          <div class="field-group">
+            <label class="field-label required">Firma (Mehrfachauswahl möglich)</label>
+            <div class="checkbox-group">
+              <label class="check-item">
+                <input type="checkbox" name="firma" value="Janning Tiefbau">
+                <span class="check-box"></span>
+                <span>Janning Tiefbau</span>
+              </label>
+              <label class="check-item">
+                <input type="checkbox" name="firma" value="Janning Bohrtechnik">
+                <span class="check-box"></span>
+                <span>Janning Bohrtechnik</span>
+              </label>
+              <label class="check-item">
+                <input type="checkbox" name="firma" value="Janning Rohrbau">
+                <span class="check-box"></span>
+                <span>Janning Rohrbau</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 2: BAUSTELLENDATEN -->
+      <section class="form-section">
+        <div class="section-label">
+          <div class="section-num">02</div>
+          <div class="section-name">Baustellendaten</div>
+        </div>
+        <div class="fields-grid">
+          <div class="field-group full-width">
+            <label class="field-label required">Baustelle</label>
+            <div class="map-field-row">
+              <input type="text" class="field-input" id="baustelle" name="baustelle" placeholder="Klicken Sie auf 'Karte öffnen' zur Auswahl" readonly required>
+              <button type="button" class="map-btn" id="openMapBtn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                  <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+                Karte öffnen
+              </button>
+            </div>
+            <input type="hidden" id="baustelleLat" name="baustelleLat">
+            <input type="hidden" id="baustelleLng" name="baustelleLng">
+          </div>
+          <div class="field-group">
+            <label class="field-label required">Arbeitgeber</label>
+            <input type="text" class="field-input" id="arbeitgeber" name="arbeitgeber" required>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Auftragsnummer</label>
+            <input type="text" class="field-input" id="auftragsnummer" name="auftragsnummer">
+          </div>
+          <div class="field-group full-width">
+            <label class="field-label">Projektname</label>
+            <input type="text" class="field-input" id="projektname" name="projektname">
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 3: PERSONAL -->
+      <section class="form-section">
+        <div class="section-label">
+          <div class="section-num">03</div>
+          <div class="section-name">Personal</div>
+        </div>
+        <div class="fields-grid">
+          <div class="field-group">
+            <label class="field-label required">Mitarbeiter (eigene Mitarbeiter)</label>
+            <input type="number" class="field-input" id="mitarbeiterAnzahl" name="mitarbeiterAnzahl" min="0" placeholder="Anzahl" required>
+          </div>
+          <div class="field-group">
+            <label class="field-label required">Nachunternehmer</label>
+            <div class="radio-group">
+              <label class="radio-item">
+                <input type="radio" name="nachunternehmer" value="Nein" checked>
+                <span class="radio-btn"></span>
+                <span>Nein</span>
+              </label>
+              <label class="radio-item">
+                <input type="radio" name="nachunternehmer" value="Ja">
+                <span class="radio-btn"></span>
+                <span>Ja</span>
+              </label>
+            </div>
+          </div>
+          <div class="field-group full-width hidden" id="subGroup">
+            <label class="field-label">Name Sub</label>
+            <input type="text" class="field-input" id="nameSub" name="nameSub">
+            <div style="margin-top: 12px;">
+              <label class="field-label">Mitarbeiter (von SUB)</label>
+              <input type="number" class="field-input" id="mitarbeiterSub" name="mitarbeiterSub" min="0" placeholder="Anzahl">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 4: ZEITRAUM & SICHERHEIT -->
+      <section class="form-section">
+        <div class="section-label">
+          <div class="section-num">04</div>
+          <div class="section-name">Zeitraum & Sicherheit</div>
+        </div>
+        <div class="fields-grid">
+          <div class="field-group">
+            <label class="field-label required">Datum von Beginn</label>
+            <input type="date" class="field-input" id="datumBeginn" name="datumBeginn" required>
+          </div>
+          <div class="field-group">
+            <label class="field-label required">Datum von Ende</label>
+            <input type="date" class="field-input" id="datumEnde" name="datumEnde" required>
+          </div>
+          <div class="field-group">
+            <label class="field-label required">Einsatz hochziehbarer Personenaufnahmemittel</label>
+            <div class="radio-group">
+              <label class="radio-item">
+                <input type="radio" name="personenaufnahmemittel" value="Nein" checked>
+                <span class="radio-btn"></span>
+                <span>Nein</span>
+              </label>
+              <label class="radio-item">
+                <input type="radio" name="personenaufnahmemittel" value="Ja">
+                <span class="radio-btn"></span>
+                <span>Ja</span>
+              </label>
+            </div>
+          </div>
+          <div class="field-group">
+            <label class="field-label required">Arbeiten in kontaminierten Bereichen</label>
+            <div class="radio-group">
+              <label class="radio-item">
+                <input type="radio" name="kontaminierteBereiche" value="Nein" checked>
+                <span class="radio-btn"></span>
+                <span>Nein</span>
+              </label>
+              <label class="radio-item">
+                <input type="radio" name="kontaminierteBereiche" value="Ja">
+                <span class="radio-btn"></span>
+                <span>Ja</span>
+              </label>
+            </div>
+          </div>
+          <div class="field-group">
+            <label class="field-label required">Umgang mit Asbest</label>
+            <div class="radio-group">
+              <label class="radio-item">
+                <input type="radio" name="asbest" value="Nein" checked>
+                <span class="radio-btn"></span>
+                <span>Nein</span>
+              </label>
+              <label class="radio-item">
+                <input type="radio" name="asbest" value="Ja">
+                <span class="radio-btn"></span>
+                <span>Ja</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SUBMIT -->
+      <div class="submit-area">
+        <button type="submit" class="submit-btn" id="submitBtn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 11 12 14 22 4"></polyline>
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+          </svg>
+          Formular absenden
+        </button>
+      </div>
+      
+      <div id="formMessage" class="form-message hidden"></div>
+    </form>
+  </main>
+
+  <!-- MAP MODAL -->
+  <div id="mapModal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <div class="modal-header">
+        <span>Baustelle auf Karte auswählen</span>
+        <button type="button" class="modal-close" id="closeMapBtn">✕</button>
+      </div>
+      <div class="map-search-row">
+        <input type="text" class="field-input" id="mapSearch" placeholder="Adresse oder Ort eingeben...">
+        <button type="button" class="map-search-btn" id="searchBtn">Suchen</button>
+      </div>
+      <div id="leafletMap"></div>
+      <div class="modal-footer">
+        <div class="selected-addr" id="selectedAddr">Klicken Sie auf die Karte, um einen Standort auszuwählen</div>
+        <button type="button" class="map-search-btn" id="confirmLocationBtn" style="background: var(--accent);">Übernehmen</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
