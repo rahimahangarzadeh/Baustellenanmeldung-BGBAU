@@ -43,6 +43,16 @@ body {
   top: 0;
   z-index: 100;
   box-shadow: 0 2px 16px rgba(0,0,0,0.3);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  transition: transform 0.3s ease-in-out;
+}
+
+.site-header.header-hidden {
+  transform: translateY(-100%);
 }
 
 .header-inner {
