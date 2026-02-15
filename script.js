@@ -458,3 +458,27 @@ function showFormMessage(message, type) {
     messageEl.classList.add('hidden');
   }, 5000);
 }
+
+// ============================================================
+// AUTO-HIDE HEADER ON SCROLL
+// ============================================================
+let lastScrollTop = 0;
+let scrollThreshold = 100; // Erst nach 100px scrollen reagieren
+const header = document.querySelector('.site-header');
+
+window.addEventListener('scroll', () => {
+  const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+  
+  // Nur reagieren wenn genug gescrollt wurde
+  if (Math.abs(scrollTop - lastScrollTop) < 5) return;
+  
+  if (scrollTop > lastScrollTop && scrollTop > scrollThreshold) {
+    // Runterscrollen - Header verstecken
+    header.classList.add('header-hidden');
+  } else {
+    // Hochscrollen - Header zeigen
+    header.classList.remove('header-hidden');
+  }
+  
+  lastScrollTop = scrollTop;
+});
